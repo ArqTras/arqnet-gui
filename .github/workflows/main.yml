@@ -18,6 +18,12 @@ jobs:
         with:
           node-version: 16
 
+      - name: 🐍 Install Python distutils (required for node-gyp)
+        run: |
+          brew install python@3.11
+          python3 -m ensurepip
+          python3 -m pip install setuptools
+
       - name: 📦 Install dependencies
         run: yarn install
 
