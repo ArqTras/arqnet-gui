@@ -1,5 +1,5 @@
 {
-  "appId": "org.lokinet.gui",
+  "appId": "com.arqnet.gui",
   "directories": {
     "output": "release/"
   },
@@ -9,13 +9,13 @@
     "target": "dmg",
     "category": "public.app-category.utilities",
     "minimumSystemVersion": "10.15",
-    "executableName": "Lokinet-GUI"
+    "executableName": "Arqnet-GUI"
   },
   "win": {
     "target": ["portable"]
   },
   "portable": {
-    "artifactName": "Lokinet-GUI_portable.exe",
+    "artifactName": "Arqnet-GUI_portable.exe",
     "requestExecutionLevel": "admin"
   },
   "linux": {
@@ -23,7 +23,7 @@
   },
   "deb": {
     "packageCategory": "net",
-    "depends": ["lokinet (>= 0.9.10~)", "gconf2", "gconf-service", "libnotify4", "libxtst6", "libnss3"]
+    "depends": ["arqnet (>= 0.9.10~)", "gconf2", "gconf-service", "libnotify4", "libxtst6", "libnss3"]
   },
   "files": [
     "dist/**/*",

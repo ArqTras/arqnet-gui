@@ -1,13 +1,13 @@
 {
-  "name": "lokinet-gui",
-  "productName": "Lokinet-GUI",
-  "description": "A Control panel for Lokinet",
-  "version": "1.0.1",
+  "name": "arqnet-gui",
+  "productName": "Arqnet-GUI",
+  "description": "A Control panel for Arqnet",
+  "version": "1.0.0",
   "license": "GPL-3.0-or-later",
-  "homepage": "https://lokinet.org",
+  "homepage": "https://arqnet.org",
   "author": {
-    "name": "The Oxen Project",
-    "email": "team@oxen.io"
+    "name": "The Arqma Project",
+    "email": "support@arqma.com"
   },
   "main": "./dist/main.js",
   "scripts": {

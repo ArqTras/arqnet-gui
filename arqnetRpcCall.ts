@@ -11,7 +11,7 @@ import {
   sendIpcReplyAndDeleteJob
 } from './ipcNode';
 
-const RPC_BOUND_PORT = 1190;
+const RPC_BOUND_PORT = 1199; /* TO CHECK */
 const RPC_BOUND_IP = '127.0.0.1';
 const RPC_ZMQ_ADDRESS = `tcp://${RPC_BOUND_IP}:${RPC_BOUND_PORT}`;
 
@@ -33,7 +33,7 @@ const request = async (
   await dealer?.send([cmd, reply_tag, args]);
 };
 
-// LokinetApiClient::invoke
+// ArqnetApiClient::invoke
 const invoke = async (
   endpoint: string,
   reply_tag: string,
@@ -76,7 +76,7 @@ const LOG_MESSAGE_PUSH = 'log.message';
 const LOG_SUBSCRIBE_TAG_PREFIX = 'enableLogs';
 let lastEnableLogsRequestTimestamp: number | undefined;
 
-export const subscribeLokinetLogs = async (): Promise<void> => {
+export const subscribeArqnetLogs = async (): Promise<void> => {
   await invoke(
     'llarp.logs',
     `${LOG_SUBSCRIBE_TAG_PREFIX}-${Date.now()}`,
@@ -103,7 +103,7 @@ function sendEnableLogsAgainIfNeeded() {
     lastEnableLogsRequestTimestamp &&
     Date.now() - lastEnableLogsRequestTimestamp > 30 * 1000
   ) {
-    subscribeLokinetLogs();
+    subscribeArqnetLogs();
   }
 }
 
@@ -156,7 +156,7 @@ const loopDealerReceiving = async (): Promise<void> => {
   }
 };
 
-export const initialLokinetRpcDealer = async (): Promise<void> => {
+export const initialArqnetRpcDealer = async (): Promise<void> => {
   if (dealer) {
     throw new Error('RPC Channel is already init.');
   }

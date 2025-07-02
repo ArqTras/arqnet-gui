@@ -1,6 +1,6 @@
 local default_deps = 'npm yarn';
 local default_windows_deps = 'zip nsis npm yarn';
-local docker_image = 'registry.oxen.rocks/lokinet-ci-nodejs-lts';
+local docker_image = 'registry.oxen.rocks/arqnet-ci-nodejs-lts';
 
 local apt_get_quiet = 'apt-get -o=Dpkg::Use-Pty=0 -q';
 
@@ -12,7 +12,7 @@ local debian_pipeline(name,
                       build_type='Release',
                       target='deb',
                       extra_cmds=[],
-                      loki_repo=false,
+                      arq_repo=false,
                       allow_fail=false) = {
   kind: 'pipeline',
   type: 'docker',

@@ -15,7 +15,7 @@ export const PowerButtonContainerBorder = ({
   const loading = useSelector(selectDaemonOrExitIsLoading);
 
   if (loading) {
-    // display the spinner only when starting lokinet daemon or connecting to an exit
+    // display the spinner only when starting arqnet daemon or connecting to an exit
     return (
       <>
         {children}

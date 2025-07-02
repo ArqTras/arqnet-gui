@@ -1,7 +1,7 @@
 /**
  * Direction: Renderer -> Main -> Renderer
  * When renderer side wants to run some main functions, he call this IPC.
- * this can run either an rpc call (get status, add/remove exit,..) or a lokinet process manager command (start/stop the service)
+ * this can run either an rpc call (get status, add/remove exit,..) or a arqnet process manager command (start/stop the service)
  */
 
 export const IPC_CHANNEL_KEY = 'ipc-channel';

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Electron, { BrowserWindow } from 'electron';
-import { initialLokinetRpcDealer } from './lokinetRpcCall';
+import { initialArqnetRpcDealer } from './arqnetRpcCall';
 import {
   IPC_CHANNEL_KEY,
   IPC_GLOBAL_ERROR,
@@ -9,8 +9,8 @@ import {
 } from './sharedIpc';
 const { ipcMain } = Electron;
 
-import * as rpcCalls from './lokinetRpcCall';
-import * as lokinetProcessManager from './lokinetProcessManager';
+import * as rpcCalls from './arqnetRpcCall';
+import * as arqnetProcessManager from './arqnetProcessManager';
 import * as utilityIPCCalls from './utilityIPCCalls';
 
 const eventsByJobId: Record<string, Electron.IpcMainEvent> =
@@ -58,10 +58,10 @@ function isRpcCall(fnName: string) {
 }
 
 /**
- * Returns the function to call for that Lokinet Process Manager call, or undefined.
+ * Returns the function to call for that Arqnet Process Manager call, or undefined.
  */
-function isLokinetProcessManagerCall(fnName: string) {
-  return (lokinetProcessManager as any)[fnName];
+function isArqnetProcessManagerCall(fnName: string) {
+  return (arqnetProcessManager as any)[fnName];
 }
 
 /**
@@ -74,17 +74,17 @@ function isUtilityCall(fnName: string) {
 export async function initializeIpcNodeSide(
   getMainWindow: () => BrowserWindow | null
 ): Promise<void> {
-  await initialLokinetRpcDealer();
+  await initialArqnetRpcDealer();
   getMainWindowLocal = getMainWindow;
 
   ipcMain.on(IPC_CHANNEL_KEY, async (event, jobId, callName, ...args) => {
     try {
-      // Try to find a matching rpc call, or a matching lokinetProcessManager call or a matching utility call
+      // Try to find a matching rpc call, or a matching arqnetProcessManager call or a matching utility call
       const rpcCall = isRpcCall(callName);
-      const lokinetProcessManagerCall = isLokinetProcessManagerCall(callName);
+      const arqnetProcessManagerCall = isArqnetProcessManagerCall(callName);
       const utilityCall = isUtilityCall(callName);
 
-      const fnToCall = rpcCall || lokinetProcessManagerCall || utilityCall;
+      const fnToCall = rpcCall || arqnetProcessManagerCall || utilityCall;
       if (!fnToCall) {
         // if that fn is not defined at all, there is not much we can do.
         throw new Error(

@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import {
   selectDaemonRunning,
-  selectLokinetAddress,
+  selectArqnetAddress,
   selectUptime,
   selectVersion
 } from '../../features/statusSlice';
@@ -57,7 +57,7 @@ export const GeneralInfos = (): JSX.Element => {
   const uptime = useSelector(selectUptime);
   const daemonIsRunning = useSelector(selectDaemonRunning);
   const version = useSelector(selectVersion);
-  const lokinetAddress = useSelector(selectLokinetAddress);
+  const arqnetAddress = useSelector(selectArqnetAddress);
 
   const formattedUptime = daemonIsRunning ? formatUptime(uptime) : '';
   return (
@@ -69,8 +69,8 @@ export const GeneralInfos = (): JSX.Element => {
         showCopyToClipBoard={true}
       />
       <LabelSubtleWithValue
-        label="Lokinet address"
-        value={lokinetAddress}
+        label="Arqnet address"
+        value={arqnetAddress}
         showCopyToClipBoard={true}
       />
     </GeneralInfosContainer>

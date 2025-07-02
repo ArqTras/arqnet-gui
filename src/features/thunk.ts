@@ -8,8 +8,8 @@ import { store } from '../app/store';
 import {
   addExit,
   deleteExit,
-  doStartLokinetProcess,
-  doStopLokinetProcess,
+  doStartArqnetProcess,
+  doStopArqnetProcess,
   waitForDaemonStarted,
   waitForDaemonStopped
 } from '../ipc/ipcRenderer';
@@ -29,13 +29,13 @@ import { setTabSelected } from './uiStatusSlice';
  * Those async calls are redux-thunk actions. So essentially just async actions for out redux store.
  */
 
-export async function startLokinetDaemon() {
+export async function startArqnetDaemon() {
   store.dispatch(markDaemonIsTurningOn(true));
-  // this effectively trigger a start of the lokinet daemon
+  // this effectively trigger a start of the arqnet daemon
   try {
-    await runForAtLeast(doStartLokinetProcess, 5000);
+    await runForAtLeast(doStartArqnetProcess, 5000);
   } catch (e: any) {
-    console.error('doStartLokinetProcess failed with: ', e.message);
+    console.error('doStartArqnetProcess failed with: ', e.message);
   } finally {
     const isStarted = await waitForDaemonStarted();
 
@@ -46,15 +46,15 @@ export async function startLokinetDaemon() {
   }
 }
 
-export async function stopLokinetDaemon() {
+export async function stopArqnetDaemon() {
   store.dispatch(markDaemonIsTurningOff(true));
-  // this effectively trigger a stop of the lokinet daemon
+  // this effectively trigger a stop of the arqnet daemon
 
   let isRunningAfterStop = true;
   try {
-    await runForAtLeast(doStopLokinetProcess, 5000);
+    await runForAtLeast(doStopArqnetProcess, 5000);
   } catch (e: any) {
-    console.error('doStopLokinetProcess failed with: ', e.message);
+    console.error('doStopArqnetProcess failed with: ', e.message);
   } finally {
     isRunningAfterStop = await waitForDaemonStopped();
 
@@ -132,7 +132,7 @@ function updateExitsSaved(exitNode: string) {
   if (existingFromSettings.length > 5) {
     existingFromSettings.pop();
   }
-  // we always wait exit.loki to be one of the option saved
+  // we always wait exit.arq to be one of the option saved
   if (!existingFromSettings.includes(DEFAULT_EXIT_NODE)) {
     // remove the last element and add default exit node as last item
     existingFromSettings.pop();

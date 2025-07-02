@@ -9,7 +9,7 @@ declare module 'styled-components' {
     inputTextColor: string;
     dangerColor: string;
     connectingColor: string;
-    connectedLokinetColor: string;
+    connectedArqnetColor: string;
     connectedVpnModeColor: string;
   }
 }

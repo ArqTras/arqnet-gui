@@ -11,8 +11,8 @@ export function createTrayIcon(
   // keep the duplicated part to allow for search and find
   const iconFile =
     process.platform === 'darwin'
-      ? 'lokinet-logo-white_16.png'
-      : 'lokinet-logo-white_32.png';
+      ? 'arqnet-logo-white_16.png'
+      : 'arqnet-logo-white_32.png';
 
   const icon = join(__dirname, '../', 'images', iconFile);
   tray = new Tray(icon);
@@ -86,7 +86,7 @@ export function createTrayIcon(
 
   tray.on('click', (tray as any).showWindow);
 
-  tray.setToolTip('Lokinet GUI');
+  tray.setToolTip('Arqnet GUI');
   (tray as any).updateContextMenu();
 
   return tray;

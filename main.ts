@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { app, BrowserWindow, screen, Tray } from 'electron';
 import { initializeIpcNodeSide } from './ipcNode';
-import { doStopLokinetProcess } from './lokinetProcessManager';
-import { closeRpcConnection } from './lokinetRpcCall';
+import { doStopArqnetProcess } from './arqnetProcessManager';
+import { closeRpcConnection } from './arqnetRpcCall';
 import { createTrayIcon } from './trayIcon';
 import { markShouldQuit, shouldQuit } from './windowState';
 
@@ -129,16 +129,16 @@ app.on('before-quit', async (event) => {
 
   if (todoOnExit === 'stop_everything') {
     if (isLinux()) {
-      console.info('just triggering lokinet daemon stop');
-      void doStopLokinetProcess('stop_everything');
+      console.info('just triggering arqnet daemon stop');
+      void doStopArqnetProcess('stop_everything');
     } else {
       if (stopEverythingDone) {
         return;
       }
       event.preventDefault();
-      console.info('waiting for lokinet daemon to stop');
-      await doStopLokinetProcess('stop_everything');
-      console.info('lokinet daemon stopped');
+      console.info('waiting for arqnet daemon to stop');
+      await doStopArqnetProcess('stop_everything');
+      console.info('arqnet daemon stopped');
       stopEverythingDone = true;
 
       tray?.destroy();

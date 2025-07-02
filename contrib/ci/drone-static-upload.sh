@@ -28,20 +28,20 @@ if [ -n "$WINDOWS_BUILD_NAME" ]; then
 fi
 
 if [ -n "$DRONE_TAG" ]; then
-    # For a tag build use something like `lokinet-linux-amd64-v1.2.3`
-    base="lokinet-$os-$DRONE_TAG"
+    # For a tag build use something like `arqnet-linux-amd64-v1.2.3`
+    base="arqnet-$os-$DRONE_TAG"
 else
     # Otherwise build a length name from the datetime and commit hash, such as:
-    # lokinet-linux-amd64-20200522T212342Z-04d7dcc54
-    base="lokinet-$os-$(date --date=@$DRONE_BUILD_CREATED +%Y%m%dT%H%M%SZ)-${DRONE_COMMIT:0:9}"
+    # arqnet-linux-amd64-20200522T212342Z-04d7dcc54
+    base="arqnet-$os-$(date --date=@$DRONE_BUILD_CREATED +%Y%m%dT%H%M%SZ)-${DRONE_COMMIT:0:9}"
 fi
 
 upload=()
 upload_to="oxen.rocks/${DRONE_REPO// /_}/${DRONE_BRANCH// /_}$upload_to_suffix"
 
-if [ -e release/mac/Lokinet-GUI.app ]; then
+if [ -e release/mac/Arqnet-GUI.app ]; then
     upload=("$base-macos-unsigned.tar.xz")
-    (cd release/mac && tar cJvf ../../"$upload" Lokinet-GUI.app)
+    (cd release/mac && tar cJvf ../../"$upload" Arqnet-GUI.app)
 else
     shopt -s nullglob
     upload=(release/*.{exe,deb,AppImage})

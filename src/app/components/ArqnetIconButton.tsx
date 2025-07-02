@@ -23,7 +23,7 @@ const StyledIconButton = styled.button<{ size: string; theme: DefaultTheme }>`
   }
 `;
 
-export const LokinetIconButton = (props: {
+export const ArqnetIconButton = (props: {
   size: string;
   title: string;
   icon: React.ReactElement;

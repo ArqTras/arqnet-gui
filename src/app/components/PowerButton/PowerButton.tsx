@@ -11,7 +11,7 @@ import {
   selectHasExitNodeEnabled,
   markDaemonIsTurningOn
 } from '../../../features/statusSlice';
-import { stopLokinetDaemon, startLokinetDaemon } from '../../../features/thunk';
+import { stopArqnetDaemon, startArqnetDaemon } from '../../../features/thunk';
 
 import { selectedTheme } from '../../../features/uiStatusSlice';
 import { checkIfDaemonRunning } from '../../../ipc/ipcRenderer';
@@ -110,13 +110,13 @@ export const PowerButton = (): JSX.Element => {
       `onPowerButtonClick: daemonOrExitIsLoading:${daemonOrExitIsLoading},  daemonIsRunning:${daemonIsRunning},  daemonIsLoading:${daemonIsLoading}, `
     );
     if (daemonOrExitIsLoading) {
-      // we are waiting for a refresh from lokinet, drop the click event
+      // we are waiting for a refresh from arqnet, drop the click event
 
       return;
     }
     if (daemonIsRunning) {
       // no matter the current state, if the daemon is running a click on the power button means STOP the daemon
-      await stopLokinetDaemon();
+      await stopArqnetDaemon();
       return;
     }
     // here, daemon is not running. Whatever the state of the rest, we first need to start the daemon first.
@@ -133,7 +133,7 @@ export const PowerButton = (): JSX.Element => {
     );
 
     if (!isDaemonAlreadyRunning) {
-      await startLokinetDaemon();
+      await startArqnetDaemon();
     } else {
       dispatch(markDaemonIsTurningOn(false));
     }

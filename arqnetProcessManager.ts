@@ -5,16 +5,16 @@ import {
   sendGlobalErrorToAppSide,
   sendIpcReplyAndDeleteJob
 } from './ipcNode';
-import { LokinetLinuxProcessManager } from './lokinetProcessManagerLinux';
+import { ArqnetLinuxProcessManager } from './arqnetProcessManagerLinux';
 import {
-  LokinetSystemDProcessManager,
+  ArqnetSystemDProcessManager,
   isSystemD
-} from './lokinetProcessManagerSystemd';
+} from './arqnetProcessManagerSystemd';
 
-import { LokinetWindowsProcessManager } from './lokinetProcessManagerWindows';
+import { ArqnetWindowsProcessManager } from './arqnetProcessManagerWindows';
 
 import { exec } from 'child_process';
-import { LokinetMacOSProcessManager } from './lokinetProcessManagerMacOS';
+import { ArqnetMacOSProcessManager } from './arqnetProcessManagerMacOS';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const execPromisified = util.promisify(exec);
@@ -50,59 +50,59 @@ export const invoke = async (
   return null;
 };
 
-export interface ILokinetProcessManager {
-  nodeStartLokinetProcess: () => Promise<string | null>;
-  nodeStopLokinetProcess: () => Promise<string | null>;
+export interface IArqnetProcessManager {
+  nodeStartArqnetProcess: () => Promise<string | null>;
+  nodeStopArqnetProcess: () => Promise<string | null>;
 }
 
-let lokinetProcessManager: ILokinetProcessManager;
+let arqnetProcessManager: IArqnetProcessManager;
 
-const getLokinetProcessManager = async () => {
-  if (lokinetProcessManager) {
-    return lokinetProcessManager;
+const getArqnetProcessManager = async () => {
+  if (arqnetProcessManager) {
+    return arqnetProcessManager;
   }
 
   if (process.platform === WIN) {
     logLineToAppSide('Current system is windows');
 
-    lokinetProcessManager = new LokinetWindowsProcessManager();
-    return lokinetProcessManager;
+    arqnetProcessManager = new ArqnetWindowsProcessManager();
+    return arqnetProcessManager;
   }
 
   if (process.platform === MACOS) {
     logLineToAppSide('Current system is macos');
 
-    lokinetProcessManager = new LokinetMacOSProcessManager();
-    return lokinetProcessManager;
+    arqnetProcessManager = new ArqnetMacOSProcessManager();
+    return arqnetProcessManager;
   }
 
   if (process.platform === LINUX) {
     if (await isSystemD()) {
-      lokinetProcessManager = new LokinetSystemDProcessManager();
-      return lokinetProcessManager;
+      arqnetProcessManager = new ArqnetSystemDProcessManager();
+      return arqnetProcessManager;
     }
     logLineToAppSide('Current system is linux but not systemd');
 
-    lokinetProcessManager = new LokinetLinuxProcessManager();
-    return lokinetProcessManager;
+    arqnetProcessManager = new ArqnetLinuxProcessManager();
+    return arqnetProcessManager;
   }
   logLineToAppSide('Current system is UNSUPPORTED');
 
   throw new Error(
-    `LokinetProcessManager not implemented for ${process.platform}`
+    `ArqnetProcessManager not implemented for ${process.platform}`
   );
 };
 
-export const doStartLokinetProcess = async (jobId: string): Promise<void> => {
+export const doStartArqnetProcess = async (jobId: string): Promise<void> => {
   let result: string | undefined;
 
   try {
-    logLineToAppSide('About to start Lokinet process');
+    logLineToAppSide('About to start Arqnet process');
 
-    const manager = await getLokinetProcessManager();
+    const manager = await getArqnetProcessManager();
 
-    let startResult = await manager.nodeStartLokinetProcess();
-    logLineToAppSide(`Lokinet process start result: "${startResult}"`);
+    let startResult = await manager.nodeStartArqnetProcess();
+    logLineToAppSide(`Arqnet process start result: "${startResult}"`);
 
     if (
       startResult &&
@@ -110,11 +110,11 @@ export const doStartLokinetProcess = async (jobId: string): Promise<void> => {
     ) {
       // try to stop it and restart it?
       logLineToAppSide(`Trying to restart the daemon...`);
-      const stopResult = await manager.nodeStopLokinetProcess();
+      const stopResult = await manager.nodeStopArqnetProcess();
       logLineToAppSide(`restart stop: ${stopResult}`);
 
-      startResult = await manager.nodeStartLokinetProcess();
-      logLineToAppSide(`Lokinet process restart result: "${startResult}"`);
+      startResult = await manager.nodeStartArqnetProcess();
+      logLineToAppSide(`Arqnet process restart result: "${startResult}"`);
     }
 
     if (startResult) {
@@ -122,28 +122,28 @@ export const doStartLokinetProcess = async (jobId: string): Promise<void> => {
     }
     sendIpcReplyAndDeleteJob(jobId, null, '');
   } catch (e: any) {
-    logLineToAppSide(`Lokinet process start failed with ${e.message}`);
-    console.info('nodeStartLokinetProcess failed with', e);
+    logLineToAppSide(`Arqnet process start failed with ${e.message}`);
+    console.info('nodeStartArqnetProcess failed with', e);
     sendGlobalErrorToAppSide('error-start-stop');
     sendIpcReplyAndDeleteJob(jobId, null, result);
   }
 };
 
 /**
- * doStopLokinetProcess is only called when exiting the app so there is no point to wait
+ * doStopArqnetProcess is only called when exiting the app so there is no point to wait
  * for the event return and so no jobId argument required
  */
-export const doStopLokinetProcess = async (jobId: string): Promise<void> => {
+export const doStopArqnetProcess = async (jobId: string): Promise<void> => {
   try {
-    logLineToAppSide('About to stop Lokinet process');
+    logLineToAppSide('About to stop Arqnet process');
 
-    const manager = await getLokinetProcessManager();
-    await manager.nodeStopLokinetProcess();
+    const manager = await getArqnetProcessManager();
+    await manager.nodeStopArqnetProcess();
     sendIpcReplyAndDeleteJob(jobId, null, '');
   } catch (e: any) {
-    logLineToAppSide(`Lokinet process stop failed with ${e.message}`);
+    logLineToAppSide(`Arqnet process stop failed with ${e.message}`);
     sendIpcReplyAndDeleteJob(jobId, e.message, '');
 
-    console.info('nodeStopLokinetProcess failed with', e);
+    console.info('nodeStopArqnetProcess failed with', e);
   }
 };

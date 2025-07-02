@@ -9,14 +9,14 @@ const options: Array<{ id: OnExitStopSetting; title: string; label: string }> =
   [
     {
       id: 'stop_everything',
-      label: 'Stop the Lokinet daemon',
-      title: 'Stop the exit mode set and the Lokinet daemon. '
+      label: 'Stop the Arqnet daemon',
+      title: 'Stop the exit mode set and the Arqnet daemon. '
     },
     {
       id: 'keep_everything',
-      label: 'Keep the Lokinet daemon running',
+      label: 'Keep the Arqnet daemon running',
       title:
-        'Keep Lokinet and the current exit status running even when the app is fully stopped.'
+        'Keep Arqnet and the current exit status running even when the app is fully stopped.'
     }
   ];
 

@@ -48,7 +48,7 @@ module.exports = {
     filename: 'js/[name].js',
     publicPath: './' //needs to be "./" for releases
   },
-  plugins: [new HtmlWebpackPlugin({ title: 'Lokinet GUI' })],
+  plugins: [new HtmlWebpackPlugin({ title: 'Arqnet GUI' })],
   optimization: {
     minimize: false
   }

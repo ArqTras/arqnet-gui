@@ -1,6 +1,6 @@
-# Lokinet Control GUI
+# Arqnet Control GUI
 
-This repository contains a cross-platform GUI for controlling and observing stats from a locally-running lokinet. See also [loki-network](https://github.com/oxen-io/loki-network).
+This repository contains a cross-platform GUI for controlling and observing stats from a locally-running arqnet. See also [arq-network](https://github.com/arqma/arq-network).
 
 ## Build Instructions
 
@@ -20,8 +20,8 @@ OR
 
 Clone the repo:
 
-    $ git clone --recursive https://github.com/oxen-io/lokinet-gui
-    $ cd lokinet-gui
+    $ git clone --recursive https://github.com/oxen-io/arqnet-gui
+    $ cd arqnet-gui
 
 If using asdf:
 
@@ -46,3 +46,7 @@ To do change the code and see the result, the easiest is to now work on ubuntu, 
 ## Env variables
 
 `OPEN_DEV_TOOLS=1` to open dev tools on start up
+
+## Credits
+
+Based on Lokinet-GUI

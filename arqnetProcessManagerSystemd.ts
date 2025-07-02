@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ILokinetProcessManager, invoke } from './lokinetProcessManager';
+import { IArqnetProcessManager, invoke } from './arqnetProcessManager';
 import util from 'util';
 import { exec } from 'child_process';
 import { logLineToAppSide } from './ipcNode';
@@ -26,23 +26,23 @@ export const isSystemD = async (): Promise<boolean> => {
   }
 };
 
-const lokinetService = 'lokinet.service';
+const arqnetService = 'arqnet.service';
 
-export class LokinetSystemDProcessManager implements ILokinetProcessManager {
-  async nodeStartLokinetProcess(): Promise<string | null> {
+export class ArqnetSystemDProcessManager implements IArqnetProcessManager {
+  async nodeStartArqnetProcess(): Promise<string | null> {
     const result = await invoke('systemctl', [
       '--no-block',
       'start',
-      lokinetService
+      arqnetService
     ]);
 
     if (!result) {
-      logLineToAppSide('SystemD: lokinet service started');
+      logLineToAppSide('SystemD: arqnet service started');
     }
     return result;
   }
 
-  async nodeStopLokinetProcess(): Promise<string | null> {
-    return invoke('systemctl', ['--no-block', 'stop', lokinetService]);
+  async nodeStopArqnetProcess(): Promise<string | null> {
+    return invoke('systemctl', ['--no-block', 'stop', arqnetService]);
   }
 }

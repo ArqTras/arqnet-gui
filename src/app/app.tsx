@@ -43,12 +43,12 @@ const useSummaryStatusPolling = () => {
   const dispatch = useAppDispatch();
 
   const globalError = useSelector(selectGlobalError);
-  const isInitialStartLokinetDone = useSelector(selectInitialDaemonStartDone);
+  const isInitialStartArqnetDone = useSelector(selectInitialDaemonStartDone);
 
   // register an interval for fetching the status of the daemon
   useInterval(async () => {
     // no need to start polling for updates if the daemon is not running
-    if (!isInitialStartLokinetDone) {
+    if (!isInitialStartArqnetDone) {
       return;
     }
     // getSummaryStatus sends an IPC call to our node environment
@@ -110,7 +110,7 @@ const App = () => {
 
 ReactDom.render(<div id="root" />, document.body);
 
-const LokinetThemeProvider = (props: { children: React.ReactNode }) => {
+const ArqnetThemeProvider = (props: { children: React.ReactNode }) => {
   const currentTheme = useSelector(selectedTheme);
   const dispatch = useDispatch();
 
@@ -134,10 +134,10 @@ const LokinetThemeProvider = (props: { children: React.ReactNode }) => {
 // Make the Redux store available to all sub components of <App/>
 ReactDom.render(
   <Provider store={store}>
-    <LokinetThemeProvider>
+    <ArqnetThemeProvider>
       <GlobalStyle />
       <App />
-    </LokinetThemeProvider>
+    </ArqnetThemeProvider>
   </Provider>,
   document.getElementById('root')
 );

@@ -78,7 +78,7 @@ function logState(text: string, state: SummaryStatusState) {
       // 'numPeersConnected',
       'uploadUsage',
       'downloadUsage',
-      // 'lokiAddress',
+      // 'arqAddress',
       // 'numPathsBuilt',
       'numRoutersKnown',
       'ratio',
@@ -113,7 +113,7 @@ export const statusSlice = createSlice({
       }>
     ) => {
       state.isRunning = action.payload.daemonStatus?.isRunning || false;
-      if (!state.isRunning || !action.payload.daemonStatus?.lokiAddress) {
+      if (!state.isRunning || !action.payload.daemonStatus?.arqAddress) {
         state.isRunning = false;
         state.networkReady = false;
         state.downloadUsage = 0;
@@ -121,7 +121,7 @@ export const statusSlice = createSlice({
         state.numPathsBuilt = 0;
         state.numRoutersKnown = 0;
         state.numPeersConnected = 0;
-        state.lokiAddress = '';
+        state.arqAddress = '';
         state.ratio = '';
         state.version = undefined;
         state.uptime = undefined;
@@ -147,7 +147,7 @@ export const statusSlice = createSlice({
       state.numPeersConnected =
         action.payload.daemonStatus?.numPeersConnected || 0;
 
-      state.lokiAddress = action.payload.daemonStatus?.lokiAddress || '';
+      state.arqAddress = action.payload.daemonStatus?.arqAddress || '';
       state.ratio = action.payload.daemonStatus?.ratio || '';
       state.version = action.payload.daemonStatus?.version;
       state.uptime = action.payload.daemonStatus?.uptime;
@@ -377,8 +377,8 @@ export function selectUptime(state: RootState) {
   return (!selectDaemonIsLoading(state) && state.status.uptime) || 0;
 }
 
-export function selectLokinetAddress(state: RootState) {
-  return (!selectDaemonIsLoading(state) && state.status.lokiAddress) || '';
+export function selectArqnetAddress(state: RootState) {
+  return (!selectDaemonIsLoading(state) && state.status.arqAddress) || '';
 }
 
 export const selectUploadRate = createSelector(

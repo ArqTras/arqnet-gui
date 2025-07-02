@@ -17,7 +17,7 @@ import {
   markDaemonIsTurningOn,
   markInitialDaemonStartDone
 } from '../features/statusSlice';
-import { startLokinetDaemon } from '../features/thunk';
+import { startArqnetDaemon } from '../features/thunk';
 import { runForAtLeast } from '../app/promiseUtils';
 
 const channelsFromRendererToMainToMake = {
@@ -26,9 +26,9 @@ const channelsFromRendererToMainToMake = {
   isDaemonRunning,
   addExit,
   deleteExit,
-  // lokinet process manager calls
-  doStartLokinetProcess,
-  doStopLokinetProcess,
+  // arqnet process manager calls
+  doStartArqnetProcess,
+  doStopArqnetProcess,
   // utility calls
   markRendererReadyOnNodeSide,
   minimizeToTray
@@ -99,12 +99,12 @@ export async function deleteExit(): Promise<string> {
   return channels.deleteExit();
 }
 
-export async function doStopLokinetProcess(): Promise<string | null> {
-  return channels.doStopLokinetProcess('doStopLokinetProcess');
+export async function doStopArqnetProcess(): Promise<string | null> {
+  return channels.doStopArqnetProcess('doStopArqnetProcess');
 }
 
-export async function doStartLokinetProcess(): Promise<string | null> {
-  return channels.doStartLokinetProcess('doStartLokinetProcess');
+export async function doStartArqnetProcess(): Promise<string | null> {
+  return channels.doStartArqnetProcess('doStartArqnetProcess');
 }
 
 export async function markRendererReadyOnNodeSide(): Promise<void> {
@@ -154,12 +154,12 @@ export async function checkIfDaemonRunning(reason: string): Promise<boolean> {
     // if it does timeout, an exception is thrown
 
     appendToAppLogsOutsideRedux(
-      `checking if the lokinet daemon replies for reason: "${reason}"...`
+      `checking if the arqnet daemon replies for reason: "${reason}"...`
     );
     const daemonIsRunning = await isDaemonRunning();
     if (daemonIsRunning) {
       appendToAppLogsOutsideRedux(
-        `Lokinet daemon did reply for reason: "${reason}"`
+        `Arqnet daemon did reply for reason: "${reason}"`
       );
 
       return true;
@@ -167,7 +167,7 @@ export async function checkIfDaemonRunning(reason: string): Promise<boolean> {
     throw new Error('empty status for checkIfDaemonRunning ');
   } catch (e) {
     appendToAppLogsOutsideRedux(
-      `Lokinet daemon did not reply for reason: "${reason}"`
+      `Arqnet daemon did not reply for reason: "${reason}"`
     );
 
     return false;
@@ -179,7 +179,7 @@ export async function checkIfDaemonRunning(reason: string): Promise<boolean> {
  *
  *
  * This function creates all the channels needed for communication, and then sends an event to the node side so the node side do what could not be done before the renderer was ready.
- * This includes for instance subscribing the lokinet logs. We need the listeners to be set in the rendere for the subscribing to make sense.
+ * This includes for instance subscribing the arqnet logs. We need the listeners to be set in the rendere for the subscribing to make sense.
  */
 export async function initializeIpcRendererSide(): Promise<void> {
   // We listen to a lot of events on ipcRenderer, often on the same channel. This prevents
@@ -228,9 +228,9 @@ export async function initializeIpcRendererSide(): Promise<void> {
 
   const isDaemonAlreadyRunning = await checkIfDaemonRunning('initialize ipc');
   if (!isDaemonAlreadyRunning) {
-    await startLokinetDaemon();
+    await startArqnetDaemon();
   }
-  // this starts the subscribing of the logs from the lokinet daemon
+  // this starts the subscribing of the logs from the arqnet daemon
   await markRendererReadyOnNodeSide();
 
   // unlock the polls of getSummaryStatus on the main app, as the daemon should be running now
@@ -396,7 +396,7 @@ export interface DaemonSummaryStatus {
   numPeersConnected: number;
   uploadUsage: number;
   downloadUsage: number;
-  lokiAddress: string;
+  arqAddress: string;
   numPathsBuilt: number;
   numRoutersKnown: number;
   ratio: string;
@@ -416,7 +416,7 @@ export const defaultDaemonSummaryStatus: DaemonSummaryStatus = {
   numPeersConnected: 0,
   uploadUsage: 0,
   downloadUsage: 0,
-  lokiAddress: '',
+  arqAddress: '',
   numPathsBuilt: 0,
   numRoutersKnown: 0,
   ratio: '',
@@ -469,7 +469,7 @@ export const parseSummaryStatus = (
   parsedSummaryStatus.isRunning = statsResult.running || false;
   parsedSummaryStatus.numRoutersKnown = statsResult.numRoutersKnown || 0;
 
-  parsedSummaryStatus.lokiAddress = statsResult.lokiAddress || '';
+  parsedSummaryStatus.arqAddress = statsResult.arqAddress || '';
   parsedSummaryStatus.uptime = statsResult.uptime || 0;
   parsedSummaryStatus.version = statsResult.version || '';
 
@@ -486,8 +486,8 @@ export const parseSummaryStatus = (
   const authCodes = statsResult?.authCodes || undefined;
 
   if (authCodes) {
-    for (const lokiExit in authCodes) {
-      const auth = statsResult?.authCodes[lokiExit];
+    for (const arqExit in authCodes) {
+      const auth = statsResult?.authCodes[arqExit];
       parsedSummaryStatus.exitAuthCodeFromDaemon = auth;
     }
   } else {

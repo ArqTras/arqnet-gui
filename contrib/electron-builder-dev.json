@@ -1,5 +1,5 @@
 {
-  "appId": "org.lokinet.gui",
+  "appId": "com.arqnet.gui",
   "directories": {
     "output": "release/"
   },
@@ -11,13 +11,13 @@
     "hardenedRuntime": false,
     "category": "public.app-category.utilities",
     "minimumSystemVersion": "10.15",
-    "executableName": "Lokinet-GUI"
+    "executableName": "Arqnet-GUI"
   },
   "win": {
     "target": ["portable"]
   },
   "portable": {
-    "artifactName": "Lokinet-GUI_portable-dev.exe",
+    "artifactName": "Arqnet-GUI_portable-dev.exe",
     "requestExecutionLevel": "admin"
   },
   "linux": {

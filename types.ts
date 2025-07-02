@@ -10,4 +10,4 @@ export function getDefaultOnExitDo(): OnExitStopSetting {
   return 'stop_everything';
 }
 
-export const DEFAULT_EXIT_NODE = 'exit.loki';
+export const DEFAULT_EXIT_NODE = 'exit.arq';

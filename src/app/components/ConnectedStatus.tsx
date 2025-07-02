@@ -50,7 +50,7 @@ const StyledLogoAndTitle = styled.svg`
   fill: ${(props) => props.theme.textColor};
 `;
 
-const LokinetTitleSvg = () => {
+const ArqnetTitleSvg = () => {
   return (
     <ConnectedStatusContainerWithLogo>
       <StyledLogoAndTitle
@@ -75,7 +75,7 @@ export const ConnectedStatus = (): JSX.Element => {
 
 
   if (daemonLoading || !daemonRunning) {
-    return <LokinetTitleSvg />;
+    return <ArqnetTitleSvg />;
   }
 
   let ledColor = '';
@@ -84,7 +84,7 @@ export const ConnectedStatus = (): JSX.Element => {
   if (globalError) {
     statusText =
       globalError === 'error-start-stop'
-        ? 'FAILED TO START LOKINET'
+        ? 'FAILED TO START ARQNET'
         : 'UNABLE TO CONNECT';
     ledColor = theme.dangerColor;
   } else if (exitTurningOff) {
@@ -97,8 +97,8 @@ export const ConnectedStatus = (): JSX.Element => {
     statusText = 'CONNECTED IN VPN MODE';
     ledColor = theme.connectedVpnModeColor;
   } else if (daemonRunning) {
-    statusText = 'CONNECTED TO LOKINET';
-    ledColor = theme.connectedLokinetColor;
+    statusText = 'CONNECTED TO ARQNET';
+    ledColor = theme.connectedArqnetColor;
   }
 
   return (

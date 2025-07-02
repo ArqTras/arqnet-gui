@@ -71,7 +71,7 @@ const SvgQuestionMark = () => {
 };
 
 const vpnTooltip =
-  'VPN Mode routes all internet traffic over Lokinet to your selected Exit node';
+  'VPN Mode routes all internet traffic over Arqnet to your selected Exit node';
 
 export const VpnMode = () => {
   return (

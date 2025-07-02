@@ -1,5 +1,5 @@
 import { sendIpcReplyAndDeleteJob } from './ipcNode';
-import { subscribeLokinetLogs } from './lokinetRpcCall';
+import { subscribeArqnetLogs } from './arqnetRpcCall';
 
 import { getMainWindow, getTrayIcon } from './main';
 
@@ -9,7 +9,7 @@ export function markRendererReadyOnNodeSide(jobId: string): void {
   isRendererReady = true;
 
   sendIpcReplyAndDeleteJob(jobId, null, '');
-  subscribeLokinetLogs();
+  subscribeArqnetLogs();
 }
 
 export function minimizeToTray(jobId: string): void {
