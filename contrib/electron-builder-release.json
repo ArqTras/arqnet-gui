@@ -6,7 +6,7 @@
   "asar": true,
   "mac": {
     "identity": null,
-    "target": "dmg",
+    "target": "zip",
     "category": "public.app-category.utilities",
     "minimumSystemVersion": "10.15",
     "executableName": "Arqnet-GUI"
