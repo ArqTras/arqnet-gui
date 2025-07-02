@@ -41,7 +41,7 @@ jobs:
           name: macos-build
           path: release/
 
-    build-linux:
+  build-linux:
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout repo
