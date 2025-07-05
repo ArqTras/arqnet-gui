@@ -1,11 +1,12 @@
 import { Stack } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { ConnectedStatus } from './ConnectedStatus';
 import { GeneralInfos } from './GeneralInfos';
 import { GuiTabs } from './tabs/GuiTabs';
 import { PowerButton } from './PowerButton/PowerButton';
 import { TitleBar } from './TitleBar';
+import { loadConfigData } from '../../features/thunk';
 
 const Container = styled.div`
   height: 100%;
@@ -15,6 +16,10 @@ const Container = styled.div`
 `;
 
 export const AppLayout = (): JSX.Element => {
+  useEffect(() => {
+    loadConfigData();
+  }, []);
+
   return (
     <Container>
       <TitleBar />

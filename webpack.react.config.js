@@ -2,17 +2,41 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
-    mainFields: ['main', 'module', 'browser']
+    mainFields: ['main', 'module', 'browser'],
+    fullySpecified: false,
+    fallback: {
+      "crypto": false,
+      "fs": path.resolve(__dirname, 'src/fs-mock.js'),
+      "path": require.resolve("path-browserify"),
+      "os": false,
+      "child_process": false,
+      "stream": false,
+      "util": false,
+      "buffer": require.resolve("buffer"),
+      "process": require.resolve("process/browser"),
+      "assert": false,
+      "events": false,
+      "net": false,
+      "tls": false,
+      "zlib": false
+    }
   },
   entry: './src/app/app.tsx',
-  target: 'electron-renderer',
+  target: 'web',
   devtool: 'source-map',
   module: {
     rules: [
+      {
+        test: /\.m?js$/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
       {
         test: /\.(js|ts|tsx)$/,
         use: [{ loader: 'babel-loader' }],
@@ -48,8 +72,20 @@ module.exports = {
     filename: 'js/[name].js',
     publicPath: './' //needs to be "./" for releases
   },
-  plugins: [new HtmlWebpackPlugin({ title: 'Arqnet GUI' })],
+  plugins: [
+    new HtmlWebpackPlugin({ title: 'Arqnet GUI' }),
+    new webpack.DefinePlugin({
+      '__dirname': '""',
+      '__filename': '""',
+      'global': 'window'
+    }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+      Buffer: ['buffer', 'Buffer']
+    })
+  ],
   optimization: {
     minimize: false
-  }
+  },
+  node: false
 };

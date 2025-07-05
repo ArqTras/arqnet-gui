@@ -1,4 +1,3 @@
-import Store from 'electron-store';
 import {
   DEFAULT_EXIT_NODE,
   getDefaultOnExitDo,
@@ -8,36 +7,34 @@ import {
   SETTINGS_ID_STOP_ON_EXIT
 } from '../../types';
 import { ThemeType } from '../features/uiStatusSlice';
+import '../types/electronAPI';
 
-const store = new Store();
-
-export const getOnStopSetting = (): OnExitStopSetting => {
-  return store.get(
+export const getOnStopSetting = async (): Promise<OnExitStopSetting> => {
+  return await window.electronAPI.config.get(
     SETTINGS_ID_STOP_ON_EXIT,
     getDefaultOnExitDo()
   ) as OnExitStopSetting;
 };
 
-export const setOnStopSetting = (selectedSetting: OnExitStopSetting) => {
-  store.set(SETTINGS_ID_STOP_ON_EXIT, selectedSetting);
+export const setOnStopSetting = async (selectedSetting: OnExitStopSetting): Promise<void> => {
+  await window.electronAPI.config.set(SETTINGS_ID_STOP_ON_EXIT, selectedSetting);
 };
 
-export const getThemeFromSettings = (): ThemeType => {
-  return store.get(SETTINGS_ID_SELECTED_THEME, 'light') as ThemeType;
+export const getThemeFromSettings = async (): Promise<ThemeType> => {
+  return await window.electronAPI.config.get(SETTINGS_ID_SELECTED_THEME, 'light') as ThemeType;
 };
 
-export const setThemeToSettings = (selectedTheme: ThemeType) => {
-  store.set(SETTINGS_ID_SELECTED_THEME, selectedTheme);
+export const setThemeToSettings = async (selectedTheme: ThemeType): Promise<void> => {
+  await window.electronAPI.config.set(SETTINGS_ID_SELECTED_THEME, selectedTheme);
 };
 
-export const getSavedExitNodesFromSettings = (): Array<string> => {
-  return (
-    store.get(SETTINGS_ID_EXIT_NODES, [DEFAULT_EXIT_NODE]) as Array<string>
-  ).map((m) => m.trim());
+export const getSavedExitNodesFromSettings = async (): Promise<Array<string>> => {
+  const nodes = await window.electronAPI.config.get(SETTINGS_ID_EXIT_NODES, [DEFAULT_EXIT_NODE]) as Array<string>;
+  return nodes.map((m) => m.trim());
 };
 
-export const setSavedExitNodesToSettings = (exitNodes: Array<string>) => {
-  store.set(
+export const setSavedExitNodesToSettings = async (exitNodes: Array<string>): Promise<void> => {
+  await window.electronAPI.config.set(
     SETTINGS_ID_EXIT_NODES,
     exitNodes.map((e) => e.trim())
   );

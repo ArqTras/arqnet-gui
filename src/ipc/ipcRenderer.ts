@@ -1,28 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
-// Access the exposed electronAPI from the preload script
-declare global {
-  interface Window {
-    electronAPI: {
-      ipcRenderer: {
-        invoke: (channel: string, ...args: any[]) => Promise<any>;
-        send: (channel: string, ...args: any[]) => void;
-        on: (channel: string, func: (...args: any[]) => void) => void;
-        removeAllListeners: (channel: string) => void;
-        setMaxListeners: (n: number) => void;
-      };
-    };
-    nodeAPI: {
-      process: {
-        platform: string;
-      };
-    };
-  }
-}
+import '../types/electronAPI';
 
 const ipcRenderer = window.electronAPI.ipcRenderer;
 import { clone, forEach, isEmpty, isFunction, isString } from 'lodash';
-import crypto from 'crypto';
+// Use Web Crypto API instead of Node.js crypto for renderer process
+function generateJobId(): string {
+  const array = new Uint8Array(15);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
 import {
   IPC_CHANNEL_KEY,
   IPC_GLOBAL_ERROR,
@@ -39,31 +25,36 @@ import {
 import { startArqnetDaemon } from '../features/thunk';
 import { runForAtLeast } from '../app/promiseUtils';
 
-const channelsFromRendererToMainToMake = {
-  // rpc calls (zeromq calls)
-  getSummaryStatus,
-  isDaemonRunning,
-  addExit,
-  deleteExit,
-  // arqnet process manager calls
-  doStartArqnetProcess,
-  doStopArqnetProcess,
-  // utility calls
-  markRendererReadyOnNodeSide,
-  minimizeToTray
-};
 const channels = {} as any;
 const _jobs = Object.create(null);
 
 export const POLLING_STATUS_INTERVAL_MS = 500;
 
+// Helper function to check if IPC is initialized
+export function isIpcInitialized(): boolean {
+  return _isInitialized;
+}
+
 // shutting down clean handling
 let _shuttingDown = false;
 let _shutdownCallback: any = null;
 let _shutdownPromise: any = null;
+let _isInitialized = false;
+
+// Helper function to ensure channels are initialized
+function ensureChannelExists(channelName: string): boolean {
+  if (!_isInitialized || !channels[channelName]) {
+    console.warn(`IPC channel '${channelName}' is not initialized yet. Skipping call.`);
+    return false;
+  }
+  return true;
+}
 
 export async function isDaemonRunning(): Promise<boolean> {
   try {
+    if (!ensureChannelExists('isDaemonRunning')) {
+      return false; // Return false if channel not ready
+    }
     const statusAsString = await channels.isDaemonRunning();
     // isDaemonRunning is actually doing a llarp.status call, which returns an non empty string when it worked
     if (isEmpty(statusAsString)) {
@@ -101,6 +92,9 @@ export async function isDaemonRunning(): Promise<boolean> {
 }
 
 export async function getSummaryStatus(): Promise<string> {
+  if (!ensureChannelExists('getSummaryStatus')) {
+    return ''; // Return empty string if channel not ready
+  }
   return channels.getSummaryStatus();
 }
 
@@ -108,6 +102,9 @@ export async function addExit(
   exitAddress: string,
   exitToken?: string
 ): Promise<string> {
+  if (!ensureChannelExists('addExit')) {
+    throw new Error('IPC channels not initialized');
+  }
   console.info(
     `Triggering exit node set with node ${exitAddress}, authCode:${exitToken}`
   );
@@ -115,22 +112,39 @@ export async function addExit(
 }
 
 export async function deleteExit(): Promise<string> {
+  if (!ensureChannelExists('deleteExit')) {
+    throw new Error('IPC channels not initialized');
+  }
   return channels.deleteExit();
 }
 
 export async function doStopArqnetProcess(): Promise<string | null> {
+  if (!ensureChannelExists('doStopArqnetProcess')) {
+    throw new Error('IPC channels not initialized');
+  }
   return channels.doStopArqnetProcess('doStopArqnetProcess');
 }
 
 export async function doStartArqnetProcess(): Promise<string | null> {
+  if (!ensureChannelExists('doStartArqnetProcess')) {
+    throw new Error('IPC channels not initialized');
+  }
   return channels.doStartArqnetProcess('doStartArqnetProcess');
 }
 
 export async function markRendererReadyOnNodeSide(): Promise<void> {
+  if (!ensureChannelExists('markRendererReadyOnNodeSide')) {
+    throw new Error('IPC channels not initialized');
+  }
   channels.markRendererReadyOnNodeSide('renderer-is-ready-job-id');
 }
 
 export async function minimizeToTray(): Promise<void> {
+  console.log('minimizeToTray called'), channels;
+  if (!ensureChannelExists('minimizeToTray')) {
+    console.warn('Cannot minimize to tray: IPC channels not initialized');
+    return;
+  }
   channels.minimizeToTray('minimizeToTray');
 }
 
@@ -205,25 +219,45 @@ export async function initializeIpcRendererSide(): Promise<void> {
   //   any warnings that might be sent to the console in that case.
   ipcRenderer.setMaxListeners(0);
 
+  const channelsFromRendererToMainToMake = {
+    // rpc calls (zeromq calls)
+    getSummaryStatus,
+    isDaemonRunning,
+    addExit,
+    deleteExit,
+    // arqnet process manager calls
+    doStartArqnetProcess,
+    doStopArqnetProcess,
+    // utility calls
+    markRendererReadyOnNodeSide,
+    minimizeToTray
+  };
+
   forEach(channelsFromRendererToMainToMake, (fn) => {
     if (isFunction(fn)) {
       makeChannel(fn.name);
     }
   });
 
-  ipcRenderer.on(IPC_LOG_LINE, (_event, logLine: string) => {
+  // Create closeRpcConnection channel manually since it's defined later
+  makeChannel('closeRpcConnection');
+
+  // Mark as initialized after all channels are created
+  _isInitialized = true;
+
+  ipcRenderer.on(IPC_LOG_LINE, (_event: any, logLine: string) => {
     if (isString(logLine) && !isEmpty(logLine)) {
       appendToAppLogsOutsideRedux(logLine);
     }
   });
 
-  ipcRenderer.on(IPC_GLOBAL_ERROR, (_event, globalError: StatusErrorType) => {
+  ipcRenderer.on(IPC_GLOBAL_ERROR, (_event: any, globalError: StatusErrorType) => {
     setErrorOutsideRedux(globalError);
   });
 
   ipcRenderer.on(
     `${IPC_CHANNEL_KEY}-done`,
-    (_event, jobId, errorForDisplay, result: string | null) => {
+    (_event: any, jobId: string, errorForDisplay: string, result: string | null) => {
       const job = _getJob(jobId);
       if (!job) {
         console.info(
@@ -296,7 +330,7 @@ function _makeJob(fnName: string) {
     );
   }
 
-  const jobId = crypto.randomBytes(15).toString('hex');
+  const jobId = generateJobId();
 
   _jobs[jobId] = {
     fnName
@@ -399,6 +433,10 @@ export async function shutdown(): Promise<void> {
 }
 // Note: will need to restart the app after calling this, to set up afresh
 export async function closeRpcConnection(): Promise<void> {
+  if (!ensureChannelExists('closeRpcConnection')) {
+    console.warn('Cannot close RPC connection: IPC channels not initialized');
+    return;
+  }
   await channels.closeRpcConnection();
 }
 

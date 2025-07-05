@@ -52,8 +52,8 @@ const initialSummaryStatusState: SummaryStatusState = {
   exitTurningOff: false,
   daemonIsTurningOn: true, // on app start, we try to start the daemon if it's not already running.
   daemonIsTurningOff: false,
-  exitNodeFromUser: getSavedExitNodesFromSettings()[0],
-  exitsFromSettings: getSavedExitNodesFromSettings(),
+  exitNodeFromUser: '', // Will be loaded from settings
+  exitsFromSettings: [], // Will be loaded from settings
   exitAuthCodeFromUser: undefined,
   speedHistory: getDefaultSpeedHistory()
 };

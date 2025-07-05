@@ -102,6 +102,7 @@ const useSummaryStatusPolling = () => {
 
 const App = () => {
   useEffect(() => {
+    console.log('App component mounted');
     void initializeIpcRendererSide();
   }, []);
   useSummaryStatusPolling();
@@ -115,13 +116,16 @@ const ArqnetThemeProvider = (props: { children: React.ReactNode }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fromSettings = getThemeFromSettings();
-    if (
-      (currentTheme !== fromSettings && fromSettings === 'light') ||
-      fromSettings === 'dark'
-    ) {
-      dispatch(setTheme(fromSettings));
-    }
+    const loadTheme = async () => {
+      const fromSettings = await getThemeFromSettings();
+      if (
+        (currentTheme !== fromSettings && fromSettings === 'light') ||
+        fromSettings === 'dark'
+      ) {
+        dispatch(setTheme(fromSettings));
+      }
+    };
+    loadTheme();
   }, [currentTheme, dispatch]);
 
   return (
@@ -136,7 +140,7 @@ ReactDom.render(
   <Provider store={store}>
     <ArqnetThemeProvider>
       <GlobalStyle />
-      <App />
+      <AppLayout />
     </ArqnetThemeProvider>
   </Provider>,
   document.getElementById('root')

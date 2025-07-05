@@ -28,6 +28,32 @@ contextBridge.exposeInMainWorld('electronAPI', {
     setMaxListeners: (n: number) => {
       ipcRenderer.setMaxListeners(n);
     }
+  },
+  // Config API for electron-store
+  config: {
+    get: (key: string, defaultValue?: any) => {
+      return ipcRenderer.invoke('config-get', { key, defaultValue });
+    },
+    
+    set: (key: string, value: any) => {
+      return ipcRenderer.invoke('config-set', { key, value });
+    },
+    
+    has: (key: string) => {
+      return ipcRenderer.invoke('config-has', key);
+    },
+    
+    delete: (key: string) => {
+      return ipcRenderer.invoke('config-delete', key);
+    },
+    
+    clear: () => {
+      return ipcRenderer.invoke('config-clear');
+    },
+    
+    size: () => {
+      return ipcRenderer.invoke('config-size');
+    }
   }
 });
 

@@ -21,7 +21,8 @@ import {
   markExitIsTurningOff,
   markExitIsTurningOn,
   setGlobalError,
-  updateExitsFromSettings
+  updateExitsFromSettings,
+  onUserExitNodeSet
 } from './statusSlice';
 import { setTabSelected } from './uiStatusSlice';
 
@@ -118,8 +119,8 @@ export const turnExitOff = async (): Promise<void> => {
   }
 };
 
-function updateExitsSaved(exitNode: string) {
-  let existingFromSettings = getSavedExitNodesFromSettings();
+async function updateExitsSaved(exitNode: string) {
+  let existingFromSettings = await getSavedExitNodesFromSettings();
 
   // remove any occurence of the exit node from the list.
   // as we just requested it, we want to pop it to the front
@@ -138,7 +139,7 @@ function updateExitsSaved(exitNode: string) {
     existingFromSettings.pop();
     existingFromSettings.push(DEFAULT_EXIT_NODE);
   }
-  setSavedExitNodesToSettings(existingFromSettings);
+  await setSavedExitNodesToSettings(existingFromSettings);
   store.dispatch(updateExitsFromSettings(existingFromSettings));
 }
 
@@ -162,7 +163,7 @@ export const turnExitOn = async (
   store.dispatch(appendToApplogs(toAppendToLogs));
   store.dispatch(markExitIsTurningOn(true));
 
-  updateExitsSaved(exitNode);
+  await updateExitsSaved(exitNode);
 
   // trigger the IPC+RPC call
   let addExitResult = '';
@@ -214,5 +215,24 @@ export const turnExitOn = async (
     console.timeEnd('addExit');
 
     store.dispatch(markExitIsTurningOn(false));
+  }
+};
+
+// Load initial config data from settings
+export const loadConfigData = async () => {
+  try {
+    const exitNodes = await getSavedExitNodesFromSettings();
+    store.dispatch(updateExitsFromSettings(exitNodes));
+
+    // Update the user's exit node to the first one if not set
+    const currentState = store.getState();
+    if (!currentState.status.exitNodeFromUser && exitNodes.length > 0) {
+      store.dispatch(onUserExitNodeSet(exitNodes[0]));
+    }
+  } catch (error) {
+    console.error('Failed to load config data:', error);
+    // Fallback to default
+    store.dispatch(updateExitsFromSettings([DEFAULT_EXIT_NODE]));
+    store.dispatch(onUserExitNodeSet(DEFAULT_EXIT_NODE));
   }
 };

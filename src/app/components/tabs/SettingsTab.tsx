@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUpdate } from 'react-use';
 import styled from 'styled-components';
 import { OnExitStopSetting } from '../../../../types';
@@ -59,9 +59,23 @@ const SettingsText = styled.div`
 `;
 
 export const SettingsTab = (): JSX.Element => {
-  const selectedOnStopSetting = getOnStopSetting();
+  const [selectedOnStopSetting, setSelectedOnStopSetting] = useState<OnExitStopSetting>('stop_everything');
 
   const forceUdate = useUpdate();
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      const setting = await getOnStopSetting();
+      setSelectedOnStopSetting(setting);
+    };
+    loadSettings();
+  }, []);
+
+  const handleSettingChange = async (newSetting: OnExitStopSetting) => {
+    await setOnStopSetting(newSetting);
+    setSelectedOnStopSetting(newSetting);
+    forceUdate();
+  };
 
   return (
     <SettingsTabContainer>
@@ -82,8 +96,7 @@ export const SettingsTab = (): JSX.Element => {
                 defaultChecked={selected}
                 onChange={() => {
                   if (m.id) {
-                    setOnStopSetting(m.id);
-                    forceUdate();
+                    handleSettingChange(m.id);
                   }
                 }}
               />

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { app, BrowserWindow, screen, Tray } from 'electron';
+import { app, BrowserWindow, screen, Tray, ipcMain } from 'electron';
 import * as path from 'path';
 import { initializeIpcNodeSide } from './ipcNode';
 import { doStopArqnetProcess } from './arqnetProcessManager';
@@ -36,9 +36,37 @@ async function createWindow() {
     store = new ElectronStore();
   }
 
+  // Setup config IPC handlers
+  ipcMain.handle('config-get', (event, { key, defaultValue }) => {
+    return store?.get(key, defaultValue);
+  });
+
+  ipcMain.handle('config-set', (event, { key, value }) => {
+    store?.set(key, value);
+    return true;
+  });
+
+  ipcMain.handle('config-has', (event, key) => {
+    return store?.has(key);
+  });
+
+  ipcMain.handle('config-delete', (event, key) => {
+    store?.delete(key);
+    return true;
+  });
+
+  ipcMain.handle('config-clear', () => {
+    store?.clear();
+    return true;
+  });
+
+  ipcMain.handle('config-size', () => {
+    return store?.size;
+  });
+
   const allDisplays = screen.getAllDisplays();
 
-  const openDevTools = process.env.OPEN_DEV_TOOLS || false;
+  const openDevTools = process.env.OPEN_DEV_TOOLS === 'true' || false;
   const defaultHeight = 850;
   const defaultWidth = openDevTools ? 1250 : 450;
 
