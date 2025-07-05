@@ -3,9 +3,6 @@ import { appLogsSlice } from '../features/appLogsSlice';
 import { statusSlice } from '../features/statusSlice';
 import { uiSlice } from '../features/uiStatusSlice';
 import logger from 'redux-logger';
-import thunkMiddleware from 'redux-thunk';
-
-const sharedMiddlewares = [thunkMiddleware];
 
 export const store = configureStore({
   reducer: {
@@ -13,9 +10,10 @@ export const store = configureStore({
     uiStatus: uiSlice.reducer,
     appLogsStatus: appLogsSlice.reducer
   },
-  middleware: process.env.REDUX_LOGGER
-    ? [...sharedMiddlewares, process.env.REDUX_LOGGER && logger]
-    : [...sharedMiddlewares, thunkMiddleware]
+  middleware: (getDefaultMiddleware) => 
+    process.env.REDUX_LOGGER
+      ? getDefaultMiddleware().concat(logger)
+      : getDefaultMiddleware()
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
