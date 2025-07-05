@@ -1,7 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import Electron from 'electron';
-const { ipcRenderer } = Electron;
+// Access the exposed electronAPI from the preload script
+declare global {
+  interface Window {
+    electronAPI: {
+      ipcRenderer: {
+        invoke: (channel: string, ...args: any[]) => Promise<any>;
+        send: (channel: string, ...args: any[]) => void;
+        on: (channel: string, func: (...args: any[]) => void) => void;
+        removeAllListeners: (channel: string) => void;
+        setMaxListeners: (n: number) => void;
+      };
+    };
+    nodeAPI: {
+      process: {
+        platform: string;
+      };
+    };
+  }
+}
+
+const ipcRenderer = window.electronAPI.ipcRenderer;
 import { clone, forEach, isEmpty, isFunction, isString } from 'lodash';
 import crypto from 'crypto';
 import {

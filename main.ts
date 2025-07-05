@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { app, BrowserWindow, screen, Tray } from 'electron';
+import * as path from 'path';
 import { initializeIpcNodeSide } from './ipcNode';
 import { doStopArqnetProcess } from './arqnetProcessManager';
 import { closeRpcConnection } from './arqnetRpcCall';
@@ -64,9 +65,11 @@ async function createWindow() {
 
     icon: './build/icon.png',
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
+      contextIsolation: true,
       devTools: true,
-      webSecurity: true
+      webSecurity: true,
+      preload: path.join(__dirname, 'preload.js')
     },
     backgroundColor:
       selectedTheme === 'light'
@@ -181,10 +184,9 @@ app.on('web-contents-created', (createEvent, contents) => {
   contents.on('will-attach-webview', (attachEvent) => {
     attachEvent.preventDefault();
   });
-  contents.on('new-window', (newEvent) => {
-    newEvent.preventDefault();
+  contents.setWindowOpenHandler(() => {
+    return { action: 'deny' };
   });
 });
 
 app.on('ready', createWindow);
-app.allowRendererProcessReuse = true;
