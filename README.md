@@ -32,9 +32,6 @@ Build the project:
     $ yarn install --frozen-lockfile
     $ yarn dist
 
-### CI Builds
-
-builds from ci can be obtained from our [ci server](https://oxen.rocks)
 
 ### Development
 
