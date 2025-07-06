@@ -20,7 +20,7 @@ OR
 
 Clone the repo:
 
-    $ git clone --recursive https://github.com/oxen-io/arqnet-gui
+    $ git clone --recursive https://github.com/arqma/arqnet-gui
     $ cd arqnet-gui
 
 If using asdf:
