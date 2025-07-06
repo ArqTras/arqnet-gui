@@ -16,7 +16,7 @@ jobs:
       - name: 🟢 Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
 
       - name: 🐍 Setup Python venv with distutils for node-gyp
         run: |
@@ -50,7 +50,7 @@ jobs:
       - name: 🟢 Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
 
       - name: 🐍 Install Python for node-gyp
         run: |
@@ -80,7 +80,7 @@ jobs:
       - name: 🟢 Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
 
       - name: 📦 Install dependencies
         run: yarn install
