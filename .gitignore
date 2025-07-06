@@ -75,3 +75,4 @@ patches/mtime-cache.json
 release/
 
 .gdb_history
+yarn.lock
