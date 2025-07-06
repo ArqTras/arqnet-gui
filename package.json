@@ -11,7 +11,7 @@
   },
   "main": "./dist/main.js",
   "scripts": {
-    "cleanup": "rimraf -f dist release",
+    "cleanup": "rimraf dist release",
     "dev": "concurrently \"npm run compile:electron\" \"npm run compile:react\" \"wait-on dist/main.js && electron .\"",
     "start": "electron .",
     "lint": "eslint . --ext .ts --ext .tsx",
